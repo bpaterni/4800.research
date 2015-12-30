@@ -151,6 +151,21 @@ main(int argc, char *argv[]) {
     status = clSetKernelArg(kernel, 0, sizeof(cl_mem), &bufA);
     status = clSetKernelArg(kernel, 1, sizeof(cl_mem), &bufB);
     status = clSetKernelArg(kernel, 2, sizeof(cl_mem), &bufC);
+
+    size_t index_space_size[1],
+           work_group_size[1];
+
+    index_space_size[0] = elements;
+    work_group_size[0]  = 256;
+
+    status = clEnqueueNDRangeKernel(
+            cmd_qs[0],
+            kernel,
+            1,
+            NULL,
+            index_space_size,
+            work_group_size,
+            0, NULL, NULL);
     }
 
 #if 0
