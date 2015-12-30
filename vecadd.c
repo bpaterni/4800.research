@@ -166,6 +166,15 @@ main(int argc, char *argv[]) {
             index_space_size,
             work_group_size,
             0, NULL, NULL);
+
+    status = clEnqueueReadBuffer(
+            cmd_qs[0],
+            bufC,
+            CL_TRUE,
+            0,
+            datasize,
+            C,
+            0, NULL, NULL);
     }
 
 #if 0
