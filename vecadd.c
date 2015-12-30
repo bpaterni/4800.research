@@ -143,6 +143,11 @@ main(int argc, char *argv[]) {
             devices,
             NULL, NULL, NULL);
 
+    cl_kernel kernel = clCreateKernel(
+            program,
+            "vecadd",
+            &status);
+
     }
 
 #if 0
@@ -158,6 +163,7 @@ main(int argc, char *argv[]) {
     printf("Platform version: %s\n", platform_ver);
 #endif
 
+    clReleaseKernel(kernel);
     clReleaseProgram(program);
 
     for(idx=0; idx<num_devices; idx++) {
