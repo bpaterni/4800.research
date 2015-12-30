@@ -93,6 +93,43 @@ main(int argc, char *argv[]) {
                 &status);
     }
 
+    /* Allocate two input buffers and one output buffer for the three vectors
+     * in the vector addition. */
+    cl_mem bufA = clCreateBuffer(
+            ctx,
+            CL_MEM_READ_ONLY,
+            datasize,
+            NULL,
+            &status);
+    cl_mem bufB = clCreateBuffer(
+            ctx,
+            CL_MEM_READ_ONLY,
+            datasize,
+            NULL,
+            &status);
+    cl_mem bufC = clCreateBuffer(
+            ctx,
+            CL_MEM_WRITE_ONLY,
+            datasize,
+            NULL,
+            &status);
+
+    /* Write data from the input arrays to the buffers. */
+    status = clEnqueueWriteBuffer(
+            cmd_qs[0],
+            bufA,
+            CL_FALSE,
+            0, datasize,
+            A,
+            0, NULL, NULL);
+    status = clEnqueueWriteBuffer(
+            cmd_qs[1],
+            bufB,
+            CL_FALSE,
+            0, datasize,
+            B,
+            0, NULL, NULL);
+
     }
 
 #if 0
@@ -112,6 +149,10 @@ main(int argc, char *argv[]) {
         clReleaseCommandQueue(cmd_qs[idx]);
     }
     free(cmd_qs);
+
+    clReleaseMemObject(bufA);
+    clReleaseMemObject(bufB);
+    clReleaseMemObject(bufC);
 
     clReleaseContext(ctx);
 
