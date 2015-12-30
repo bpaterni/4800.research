@@ -79,32 +79,20 @@ main(int argc, char *argv[]) {
             NULL, NULL,
             &status);
 
+    cl_command_queue *cmd_qs =
+        (cl_command_queue*)malloc(sizeof(cl_command_queue)*num_devices);
+
     cl_uint idx;
     for(idx=0; idx<num_devices; idx++) {
         cl_device_id dev = devices[idx];
 
-        char dev_name[256];
-
-        size_t len_dev_name;
-        status = clGetDeviceInfo(
+        cmd_qs[idx] = clCreateCommandQueueWithProperties(
+                ctx,
                 dev,
-                CL_DEVICE_NAME,
-                256,
-                dev_name,
-                &len_dev_name);
+                NULL,
+                &status);
+    }
 
-        cl_device_type dev_type;
-        size_t len_dev_type;
-        status = clGetDeviceInfo(
-                dev,
-                CL_DEVICE_TYPE,
-                8,
-                &dev_type,
-                &len_dev_type);
-
-        printf("Device Name %s\n", dev_name);
-        printf("Device Type: %d\n", dev_type);
-        printf("---\n");
     }
 
 #if 0
@@ -119,6 +107,11 @@ main(int argc, char *argv[]) {
 
     printf("Platform version: %s\n", platform_ver);
 #endif
+
+    for(idx=0; idx<num_devices; idx++) {
+        clReleaseCommandQueue(cmd_qs[idx]);
+    }
+    free(cmd_qs);
 
     clReleaseContext(ctx);
 
