@@ -175,7 +175,11 @@ main(int argc, char *argv[]) {
             datasize,
             C,
             0, NULL, NULL);
+
+    for(i=0; i<elements; i++) {
+        printf("%d, ", C[i]);
     }
+    printf("\n");
 
 #if 0
     char   platform_ver[256];
