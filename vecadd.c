@@ -136,6 +136,13 @@ main(int argc, char *argv[]) {
             (const char **)&program_source,
             NULL,
             &status);
+
+    status = clBuildProgram(
+            program,
+            num_devices,
+            devices,
+            NULL, NULL, NULL);
+
     }
 
 #if 0
