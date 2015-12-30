@@ -181,19 +181,6 @@ main(int argc, char *argv[]) {
     }
     printf("\n");
 
-#if 0
-    char   platform_ver[256];
-    size_t len_platform_ver;
-    status = clGetPlatformInfo(
-            platform,
-            CL_PLATFORM_VERSION,
-            32,
-            &platform_ver,
-            &len_platform_ver);
-
-    printf("Platform version: %s\n", platform_ver);
-#endif
-
     clReleaseKernel(kernel);
     clReleaseProgram(program);
 
