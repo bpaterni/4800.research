@@ -72,6 +72,13 @@ main(int argc, char *argv[]) {
             devices,
             &num_devices);
 
+    cl_context ctx = clCreateContext(
+            NULL,
+            num_devices,
+            devices,
+            NULL, NULL,
+            &status);
+
     cl_uint idx;
     for(idx=0; idx<num_devices; idx++) {
         cl_device_id dev = devices[idx];
@@ -112,6 +119,8 @@ main(int argc, char *argv[]) {
 
     printf("Platform version: %s\n", platform_ver);
 #endif
+
+    clReleaseContext(ctx);
 
     free(A);
     free(B);
