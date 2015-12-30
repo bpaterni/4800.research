@@ -21,12 +21,12 @@ const char *program_source =
 "  C[idx] = A[idx] + B[idx];\n"
 "}\n";
 
-long elements = 2048;
+int elements = 2048;
 
 static GOptionEntry entries[] =
 {
     {
-        "elements", 'l', 0, G_OPTION_ARG_INT64, &elements,
+        "elements", 'l', 0, G_OPTION_ARG_INT, &elements,
         "add together vectors of size N", "N"
     },
     { NULL }
