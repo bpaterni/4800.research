@@ -130,6 +130,12 @@ main(int argc, char *argv[]) {
             B,
             0, NULL, NULL);
 
+    cl_program program = clCreateProgramWithSource(
+            ctx,
+            1,
+            (const char **)&program_source,
+            NULL,
+            &status);
     }
 
 #if 0
@@ -144,6 +150,8 @@ main(int argc, char *argv[]) {
 
     printf("Platform version: %s\n", platform_ver);
 #endif
+
+    clReleaseProgram(program);
 
     for(idx=0; idx<num_devices; idx++) {
         clReleaseCommandQueue(cmd_qs[idx]);
