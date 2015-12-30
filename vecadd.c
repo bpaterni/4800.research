@@ -148,6 +148,9 @@ main(int argc, char *argv[]) {
             "vecadd",
             &status);
 
+    status = clSetKernelArg(kernel, 0, sizeof(cl_mem), &bufA);
+    status = clSetKernelArg(kernel, 1, sizeof(cl_mem), &bufB);
+    status = clSetKernelArg(kernel, 2, sizeof(cl_mem), &bufC);
     }
 
 #if 0
