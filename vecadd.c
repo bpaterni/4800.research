@@ -113,5 +113,9 @@ main(int argc, char *argv[]) {
     printf("Platform version: %s\n", platform_ver);
 #endif
 
+    free(A);
+    free(B);
+    free(C);
+
     return EXIT_SUCCESS;
 }
