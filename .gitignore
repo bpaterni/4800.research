@@ -1,4 +1,3 @@
-*.cl
 *.o
 *.sw[a-z]
 vecadd
