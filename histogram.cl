@@ -9,7 +9,7 @@ void histogram(__global int *data,
     int lid = get_local_id(0);
     int gid = get_global_id(0);
 
-    printf("%d\n", histogram[lid]);
+    //printf("histogram[%d]: %d\n", lid, histogram[lid]);
     //printf((__constant char *)"%d\n", histogram[lid]);
     //printf((__constant char *)"%d\n", lid);
 
