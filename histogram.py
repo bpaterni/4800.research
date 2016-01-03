@@ -69,7 +69,7 @@ class Main:
                 np_out_hist,
                 buf_out_hist)
 
-        #print np_out_hist
+        print np_out_hist
 
         #print '\n'.join(map(str, np_out_hist))
 
