@@ -89,7 +89,7 @@ main(int argc, char *argv[]) {
         cmd_qs[idx] = clCreateCommandQueueWithProperties(
                 ctx,
                 dev,
-                NULL,
+                0,
                 &status);
     }
 
