@@ -86,7 +86,7 @@ main(int argc, char *argv[]) {
     for(idx=0; idx<num_devices; idx++) {
         cl_device_id dev = devices[idx];
 
-        cmd_qs[idx] = clCreateCommandQueueWithProperties(
+        cmd_qs[idx] = clCreateCommandQueue(
                 ctx,
                 dev,
                 0,
