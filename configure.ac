@@ -4,7 +4,7 @@
 AC_PREREQ([2.69])
 AC_INIT([csbs-research], [0.1], [bpaterni@uni.edu])
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([vecadd.c])
+AC_CONFIG_SRCDIR([src/vecadd.c])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
@@ -28,5 +28,8 @@ AC_FUNC_MALLOC
 
 PKG_CHECK_MODULES([DEPS], [glib-2.0 >= 2.42.1])
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([
+  Makefile
+  src/Makefile
+  ])
 AC_OUTPUT

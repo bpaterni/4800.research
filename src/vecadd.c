@@ -128,7 +128,10 @@ main(int argc, char *argv[]) {
             0, NULL, NULL);
 
     gchar *program_source;
-    if(!g_file_get_contents("vecadd.cl", &program_source, NULL, NULL)) {
+    if(!g_file_get_contents(
+                "cl_kernels/vecadd.cl",
+                &program_source,
+                NULL, NULL)) {
         printf("Unable to read CL source file\n");
         exit(EXIT_FAILURE);
     }
