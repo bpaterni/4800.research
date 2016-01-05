@@ -120,7 +120,7 @@ main(int argc, char *argv[]) {
             A,
             0, NULL, NULL);
     status = clEnqueueWriteBuffer(
-            cmd_qs[1],
+            cmd_qs[0],
             bufB,
             CL_FALSE,
             0, datasize,
