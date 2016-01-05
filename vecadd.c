@@ -3,23 +3,10 @@
 #include <stdlib.h>
 
 #include <glib.h>
+#include <glib/gstdio.h>
 
 #include <CL/cl.h>
 
-// OpenCL kernel to perform an element-wise addition
-const char *program_source =
-"__kernel\n"
-"void vecadd(__global int *A,\n"
-"            __global int *B,\n"
-"            __global int *C)\n"
-"{\n"
-"  // Get the work-item's unique ID\n"
-"  int idx = get_global_id(0);\n"
-"\n"
-"  // Add the corresponding locations of\n"
-"  // 'A' and 'B', and store the result in 'C'.\n"
-"  C[idx] = A[idx] + B[idx];\n"
-"}\n";
 void
 check(cl_int status) {
     if(status != CL_SUCCESS) {
@@ -140,6 +127,12 @@ main(int argc, char *argv[]) {
             B,
             0, NULL, NULL);
 
+    gchar *program_source;
+    if(!g_file_get_contents("vecadd.cl", &program_source, NULL, NULL)) {
+        printf("Unable to read CL source file\n");
+        exit(EXIT_FAILURE);
+    }
+
     cl_program program = clCreateProgramWithSource(
             ctx,
             1,
@@ -193,6 +186,8 @@ main(int argc, char *argv[]) {
 
     clReleaseKernel(kernel);
     clReleaseProgram(program);
+
+    g_free(program_source);
 
     for(idx=0; idx<num_devices; idx++) {
         clReleaseCommandQueue(cmd_qs[idx]);
