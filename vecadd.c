@@ -20,6 +20,13 @@ const char *program_source =
 "  // 'A' and 'B', and store the result in 'C'.\n"
 "  C[idx] = A[idx] + B[idx];\n"
 "}\n";
+void
+check(cl_int status) {
+    if(status != CL_SUCCESS) {
+        printf("OpenCL error (%d)\n", status);
+        exit(EXIT_FAILURE);
+    }
+}
 
 int elements = 2048;
 
@@ -61,6 +68,7 @@ main(int argc, char *argv[]) {
     const size_t NUM_PLATFORMS = 1;
     cl_platform_id platform;
     status = clGetPlatformIDs(NUM_PLATFORMS, &platform, NULL);
+    check(status);
 
     const cl_uint NUM_DEVICES = 4;
     cl_device_id  devices[NUM_DEVICES];
@@ -71,6 +79,7 @@ main(int argc, char *argv[]) {
             NUM_DEVICES,
             devices,
             &num_devices);
+    check(status);
 
     cl_context ctx = clCreateContext(
             NULL,
@@ -78,6 +87,7 @@ main(int argc, char *argv[]) {
             devices,
             NULL, NULL,
             &status);
+    check(status);
 
     cl_command_queue *cmd_qs =
         (cl_command_queue*)malloc(sizeof(cl_command_queue)*num_devices);
