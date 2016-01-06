@@ -23,7 +23,7 @@ static GOptionEntry opt_entries[] =
 
 int
 main(int argc, char *argv[]) {
-    PARSE_OPTS_WITH_ENTRIES("- compute histogram of image", opt_entries)
+    PARSE_OPTS_WITH_ENTRIES("- compute histogram of image", opt_entries);
 
     return EXIT_SUCCESS;
 }

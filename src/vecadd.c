@@ -32,7 +32,7 @@ int
 main(int argc, char *argv[]) {
     PARSE_OPTS_WITH_ENTRIES(
             "- test vector addition performance",
-            entries)
+            entries);
 
     size_t datasize = sizeof(int)*elements;
 
