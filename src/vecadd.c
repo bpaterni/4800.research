@@ -7,6 +7,8 @@
 
 #include <CL/cl.h>
 
+#include "utils.h"
+
 void
 check(cl_int status) {
     if(status != CL_SUCCESS) {
@@ -28,15 +30,9 @@ static GOptionEntry entries[] =
 
 int
 main(int argc, char *argv[]) {
-    GError *error = NULL;
-    GOptionContext *ctx_opts;
-
-    ctx_opts = g_option_context_new("- test vector addition performance");
-    g_option_context_add_main_entries(ctx_opts, entries, NULL);
-    if( !g_option_context_parse(ctx_opts, &argc, &argv, &error) ) {
-        g_print("option parsing failed: %s\n", error->message);
-        exit(EXIT_FAILURE);
-    }
+    PARSE_OPTS_WITH_ENTRIES(
+            "- test vector addition performance",
+            entries)
 
     size_t datasize = sizeof(int)*elements;
 
