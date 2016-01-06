@@ -26,7 +26,7 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 
-PKG_CHECK_MODULES([DEPS], [glib-2.0 >= 2.42.1])
+PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.42.1])
 
 AC_CONFIG_FILES([
   Makefile
