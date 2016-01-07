@@ -9,5 +9,6 @@ vecadd_LDADD   = $(GLIB_LIBS) $(OPENCL_LIB)
 
 histogram_CFLAGS = $(GLIB_CFLAGS)
 histogram_SOURCES = histogram.c \
+		    $(top_srcdir)/utils/bmp-utils.c \
 		    $(top_srcdir)/utils/utils.c
 histogram_LDADD   = $(GLIB_LIBS) $(OPENCL_LIB)
