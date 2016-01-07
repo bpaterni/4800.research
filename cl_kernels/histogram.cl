@@ -10,7 +10,7 @@ void histogram(__global int *data,
     int gid = get_global_id(0);
 
     int sz_loc = get_local_size(0);
-    int sz_gbl = get_local_size(0);
+    int sz_gbl = get_global_size(0);
 
     /* Initialize local histogram to zero */
     for(int i=lid;
