@@ -6,6 +6,7 @@
 
 #include <CL/cl.h>
 
+#include "gold.h"
 #include "utils.h"
 #include "bmp-utils.h"
 
@@ -157,6 +158,17 @@ main(int argc, char *argv[]) {
             NULL,
             NULL);
     check(status);
+
+    int *ref_histogram;
+    ref_histogram  = histogramGold(h_bmp, rows*cols, HIST_BINS);
+    int i;
+    for(i=0; i<HIST_BINS; i++) {
+        printf("%3d histogram(reference): %10d : %10d\n",
+                i,
+                h_out_hist[i],
+                ref_histogram[i]);
+    }
+    free(ref_histogram);
 
     free(source);
 
