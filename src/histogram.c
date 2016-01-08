@@ -125,7 +125,7 @@ main(int argc, char *argv[]) {
     check(status);
 
     status  = clSetKernelArg(kernel, 0, sizeof(cl_mem), &buf_image);
-    status |= clSetKernelArg(kernel, 1, sizeof(int), &sz_image);
+    status |= clSetKernelArg(kernel, 1, sizeof(int), &n_pixels);
     status |= clSetKernelArg(kernel, 2, sizeof(cl_mem), &buf_out_hist);
     check(status);
 
