@@ -168,6 +168,19 @@ main(int argc, char *argv[]) {
                 h_out_hist[i],
                 ref_histogram[i]);
     }
+    int passed = 1;
+    for(i=0; i<HIST_BINS; i++) {
+        if(h_out_hist[i] != ref_histogram[i]) {
+            printf("cl_computed[%d] = %d != reference[%d] = %d\n",
+                    i, h_out_hist[i],
+                    i, ref_histogram[i]);
+            passed = 0;
+            break;
+        }
+    }
+    if(passed) {
+        printf("OpenCL computed histogram == reference histogram\n");
+    }
     free(ref_histogram);
 
     free(source);
