@@ -10,8 +10,6 @@
 #include "utils.h"
 #include "bmp-utils.h"
 
-static const int HIST_BINS = 256;
-
 static gchar *_bmp_filename = "data/cat.bmp";
 
 static GOptionEntry opt_entries[] =
@@ -22,7 +20,7 @@ static GOptionEntry opt_entries[] =
         G_OPTION_FLAG_NONE,
         G_OPTION_ARG_FILENAME,
         &_bmp_filename,
-        "BMP file for which to compute histogram",
+        "input BMP image used for rotation",
         "FILE"
     },
     { NULL }
@@ -32,17 +30,17 @@ int
 main(int argc, char *argv[]) {
     PARSE_OPTS_WITH_ENTRIES("- compute histogram of image", opt_entries);
 
+    const float theta = 45.0f;
+
     int rows, cols;
 
-    int *h_bmp = readBmp(_bmp_filename, &rows, &cols);
+    float *h_input_bmp = readBmpFloat(_bmp_filename, &rows, &cols);
 
     const int    n_pixels = rows * cols;
-    const size_t sz_image = n_pixels * sizeof(int);
+    const size_t sz_image = n_pixels * sizeof(float);
 
-    const size_t sz_hist = HIST_BINS * sizeof(int);
-
-    int *h_out_hist = (int*)malloc(sz_hist);
-    if( !h_out_hist ) {
+    float *h_output_bmp = (float*)malloc(sz_image);
+    if( !h_output_bmp ) {
         exit(EXIT_FAILURE);
     }
 
@@ -64,41 +62,63 @@ main(int argc, char *argv[]) {
     cmdq = clCreateCommandQueue(ctx, dev, 0, &status);
     check(status);
 
-    cl_mem buf_image;
-    cl_mem buf_out_hist;
-    buf_image = clCreateBuffer(ctx, CL_MEM_READ_ONLY, sz_image, NULL, &status);
-    check(status);
-    buf_out_hist = clCreateBuffer(ctx, CL_MEM_WRITE_ONLY, sz_hist, NULL, &status);
-    check(status);
+    /* The image descriptor describes the type and dimensions of the image.
+     * Here we initialize a 2D image with no pitch. */
+    cl_image_desc desc = {
+        .image_type           = CL_MEM_OBJECT_IMAGE2D,
+        .image_width          = cols,
+        .image_height         = rows,
+        .image_depth          = 0,
+        .image_array_size     = 0,
+        .image_row_pitch      = 0,
+        .image_slice_pitch    = 0,
+        .num_mip_levels = 0,
+        .num_samples    = 0,
+        .buffer         = NULL
+    };
 
-    status = clEnqueueWriteBuffer(
+    /* The image format describes the properties of each pixel */
+    cl_image_format format = {
+        .image_channel_order = CL_R,
+        .image_channel_data_type  = CL_FLOAT,
+    };
+
+    /* Create input/output images */
+    cl_mem img_in = clCreateImage(
+            ctx,
+            CL_MEM_READ_ONLY,
+            &format,
+            &desc,
+            NULL,
+            NULL);
+    cl_mem img_out = clCreateImage(
+            ctx,
+            CL_MEM_WRITE_ONLY,
+            &format,
+            &desc,
+            NULL,
+            NULL);
+
+    // offset to begin copy
+    size_t origin[3] = { 0, 0, 0 };
+    size_t region[3] = { cols, rows, 1 };
+
+    clEnqueueWriteImage(
             cmdq,
-            buf_image,
+            img_in,
             CL_TRUE,
-            0,
-            sz_image,
-            h_bmp,
-            0,
-            NULL,
-            NULL);
-    check(status);
-
-    int zero = 0;
-    status = clEnqueueFillBuffer(
-            cmdq,
-            buf_out_hist,
-            &zero,
-            sizeof(int),
-            0,
-            sz_hist,
+            origin,
+            region, 
+            0, // row pitch
+            0, // slice pitch
+            h_input_bmp,
             0,
             NULL,
             NULL);
-    check(status);
 
     gchar *source;
     if(!g_file_get_contents(
-                "cl_kernels/histogram.cl",
+                "cl_kernels/image-rotation.cl",
                 &source,
                 NULL,
                 NULL)) {
@@ -121,24 +141,29 @@ main(int argc, char *argv[]) {
     }
 
     cl_kernel kernel;
-    kernel = clCreateKernel(program, "histogram", &status);
+    kernel = clCreateKernel(program, "rotation", &status);
     check(status);
 
-    status  = clSetKernelArg(kernel, 0, sizeof(cl_mem), &buf_image);
-    status |= clSetKernelArg(kernel, 1, sizeof(int), &n_pixels);
-    status |= clSetKernelArg(kernel, 2, sizeof(cl_mem), &buf_out_hist);
+    status  = clSetKernelArg(kernel, 0, sizeof(cl_mem), &img_in);
+    status |= clSetKernelArg(kernel, 1, sizeof(cl_mem), &img_out);
+    status |= clSetKernelArg(kernel, 2, sizeof(int),    &cols);
+    status |= clSetKernelArg(kernel, 3, sizeof(int),    &rows);
+    status |= clSetKernelArg(kernel, 4, sizeof(float),  &theta);
     check(status);
 
-    size_t sz_gbl_work[1];
-    sz_gbl_work[0] = 1024;
-
-    size_t sz_loc_work[1];
-    sz_loc_work[0] = 64;
+    size_t sz_gbl_work[2] = {
+        cols,
+        rows
+    };
+    size_t sz_loc_work[2] = {
+        8,
+        8
+    };
 
     status = clEnqueueNDRangeKernel(
             cmdq,
             kernel,
-            1,
+            2,
             NULL,
             sz_gbl_work,
             sz_loc_work,
@@ -147,53 +172,33 @@ main(int argc, char *argv[]) {
             NULL);
     check(status);
 
-    status = clEnqueueReadBuffer(
+    status = clEnqueueReadImage(
             cmdq,
-            buf_out_hist,
+            img_out,
             CL_TRUE,
-            0,
-            sz_hist,
-            h_out_hist,
+            origin,
+            region,
+            0, // row-pitch
+            0, // slice-pitch
+            h_output_bmp,
             0,
             NULL,
             NULL);
     check(status);
 
-    int *ref_histogram;
-    ref_histogram  = histogramGold(h_bmp, rows*cols, HIST_BINS);
-    int i;
-    //for(i=0; i<HIST_BINS; i++) {
-    //    printf("%3d histogram(reference): %10d : %10d\n",
-    //            i,
-    //            h_out_hist[i],
-    //            ref_histogram[i]);
-    //}
-    int passed = 1;
-    for(i=0; i<HIST_BINS; i++) {
-        if(h_out_hist[i] != ref_histogram[i]) {
-            printf("cl_computed[%d] = %d != reference[%d] = %d\n",
-                    i, h_out_hist[i],
-                    i, ref_histogram[i]);
-            passed = 0;
-            break;
-        }
-    }
-    if(passed) {
-        printf("OpenCL computed histogram == reference histogram\n");
-    }
-    free(ref_histogram);
+    writeBmpFloat(h_output_bmp, "rotated-cat.bmp", rows, cols, _bmp_filename);
 
     free(source);
 
     clReleaseKernel(kernel);
     clReleaseProgram(program);
     clReleaseCommandQueue(cmdq);
-    clReleaseMemObject(buf_image);
-    clReleaseMemObject(buf_out_hist);
+    clReleaseMemObject(img_in);
+    clReleaseMemObject(img_out);
     clReleaseContext(ctx);
 
-    free(h_bmp);
-    free(h_out_hist);
+    free(h_input_bmp);
+    free(h_output_bmp);
 
     return EXIT_SUCCESS;
 }
