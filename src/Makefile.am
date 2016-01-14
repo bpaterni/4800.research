@@ -1,6 +1,6 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include
 AM_CFLAGS   = $(GLIB_CFLAGS)
-AM_LDFLAGS  = $(GLIB_LIBS) \
+LIBS        = $(GLIB_LIBS) \
 	      $(OPENCL_LIB)
 
 bin_PROGRAMS = vecadd \
