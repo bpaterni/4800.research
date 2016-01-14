@@ -5,7 +5,8 @@ AM_LDFLAGS  = $(GLIB_LIBS) \
 
 bin_PROGRAMS = vecadd \
 	       histogram \
-	       image-rotation
+	       image-rotation \
+	       image-convolution
 
 vecadd_SOURCES = vecadd.c
 
@@ -17,3 +18,7 @@ histogram_SOURCES = histogram.c \
 image_rotation_SOURCES = image-rotation.c \
 		   $(top_srcdir)/utils/bmp-utils.c \
 		   $(top_srcdir)/utils/utils.c
+
+image_convolution_SOURCES = image-convolution.c \
+			    $(top_srcdir)/utils/bmp-utils.c \
+			    $(top_srcdir)/utils/utils.c
