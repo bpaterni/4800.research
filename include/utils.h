@@ -1,6 +1,8 @@
 #ifndef __CSBS_UTILS_H
 #define __CSBS_UTILS_H
 
+#include <glib.h>
+
 #include <CL/cl.h>
 
 #define PARSE_OPTS_WITH_ENTRIES(desc, entries)                           \
@@ -15,7 +17,9 @@
     }                                                                    \
     g_option_context_free(opt_ctx);
 
-void check(cl_int),
+void parse_opts_with_desc_entries(
+        const char *, GOptionEntry *, gint *, gchar ***),
+     check(cl_int),
      print_cl_compiler_error(cl_program, cl_device_id);
 
 #endif  /* __CSBS_UTILS_H */
