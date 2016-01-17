@@ -5,6 +5,18 @@
 
 #include <CL/cl.h>
 
+#define clcheck(st) { \
+    if(st != CL_SUCCESS) { \
+        fprintf( \
+                stderr, \
+                "%s:%d: CL error (%s)\n", \
+                __FILE__, \
+                __LINE__, \
+                clerr2txt(st)); \
+        exit(EXIT_FAILURE); \
+    } \
+}
+
 #define PARSE_OPTS_WITH_ENTRIES(desc, entries)                           \
     GError *error = NULL;                                                \
     GOptionContext *opt_ctx;                                             \
