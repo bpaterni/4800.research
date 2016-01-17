@@ -22,4 +22,6 @@ void parse_opts_with_desc_entries(
      check(cl_int),
      print_cl_compiler_error(cl_program, cl_device_id);
 
+char *clerr2txt(int st);
+
 #endif  /* __CSBS_UTILS_H */
