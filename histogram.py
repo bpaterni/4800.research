@@ -69,6 +69,10 @@ class Main:
                 np_out_hist,
                 buf_out_hist)
 
+        print "reference histogram:"
+        print i_cat.histogram()
+
+        print "OpenCL computed histogram:"
         print np_out_hist
 
         #print '\n'.join(map(str, np_out_hist))
