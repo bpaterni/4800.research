@@ -70,7 +70,7 @@ class Main:
                 buf_out_hist)
 
         print "reference histogram:"
-        print i_cat.histogram()
+        print numpy.array(i_cat.histogram(), numpy.int32)
 
         print "OpenCL computed histogram:"
         print np_out_hist
