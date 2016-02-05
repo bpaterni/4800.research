@@ -27,8 +27,8 @@ class Main:
         n_elements = i_cat.size[0] * i_cat.size[1]
         hist_size  = Main.HIST_BINS
 
-        np_img_in = numpy.array(i_cat.getdata(), int)
-        np_out_hist = numpy.zeros(hist_size, int)
+        np_img_in = numpy.array(i_cat.getdata(), numpy.int32)
+        np_out_hist = numpy.zeros(hist_size, numpy.int32)
 
         print 'cat size: {}x{} = {} pixels'.format(
                 i_cat.size[0], i_cat.size[1],
